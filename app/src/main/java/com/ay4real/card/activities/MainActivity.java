@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.ay4real.card.R;
+import com.ay4real.card.constant.GlobalConstants;
 import com.ay4real.card.databinding.ActivityMainBinding;
 import com.ay4real.card.remote.request.ApiClient;
 import com.ay4real.card.remote.request.ApiInterface;
@@ -40,17 +41,23 @@ public class MainActivity extends AppCompatActivity {
                         @Override
                         public void onResponse(Call<FetchResponse> call, Response<FetchResponse> response) {
                             if (response.isSuccessful()){
-                                binding.scheme.setText(response.body().getScheme());
-                                binding.type.setText(response.body().getType());
-                                binding.bank.setText(response.body().getBank().get("name"));
-                                binding.country.setText(response.body().getCountry().get("name"));
-                                binding.length.setText(response.body().getNumber().get("length"));
-                                if(response.body().getPrepaid()){
-                                    binding.mode.setText("Prepaid");
-                                }else{
-                                    binding.mode.setText("Postpaid");
+                                if(response.body() != null){
+                                    binding.scheme.setText(response.body().getScheme());
+                                    binding.type.setText(response.body().getType());
+                                    if(response.body().getBank() != null){
+                                        binding.bank.setText(response.body().getBank().get("name"));
+                                    }else{
+                                        binding.bank.setText("");
+                                    }
+                                    binding.country.setText(response.body().getCountry().get("name"));
+                                    binding.length.setText(response.body().getNumber().get("length"));
+                                    if(response.body().getPrepaid()){
+                                        binding.mode.setText(GlobalConstants.Prepaid);
+                                    }else{
+                                        binding.mode.setText(GlobalConstants.Postpaid);
+                                    }
+                                    binding.scrollView.setVisibility(View.VISIBLE);
                                 }
-                                binding.scrollView.setVisibility(View.VISIBLE);
                             }else{
                                 binding.scrollView.setVisibility(View.GONE);
                                 Toast.makeText(getApplicationContext(), "Ooops... Card not found.",Toast.LENGTH_LONG).show();
